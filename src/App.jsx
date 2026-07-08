@@ -177,6 +177,15 @@ setImage("");
 
 <h1 text color="white">毎日ミニブログ</h1>
 
+
+{user && (
+  <button onClick={logout}>
+    ログアウト
+  </button>
+)}
+
+
+
 {user && (
 <>
 
@@ -219,16 +228,8 @@ setImage("");
     .toLocaleString("ja-JP")}
 </p>
 
-          <img
-            src={post.image_url}
-            alt=""
-            style={{
-  width: "100%",
-  height: "450px",
-  objectFit: "cover"
-}}
-
-          />
+    <img
+  src={post.image      
 
  <div className="card-content">      
 
