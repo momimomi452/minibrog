@@ -8,11 +8,17 @@ export default function App() {
   const [text, setText] = useState("");
   const [image, setImage] = useState("");
   const [editingId, setEditingId] = useState(null);
-
+  const [email, setEmail] = useState("");
+const [password, setPassword] = useState("");
+const [user, setUser] = useState(null);
 
 useEffect(() => {
-  loadPosts();
+  supabase.auth.getUser().then(({ data }) => {
+    setUser(data.user);
+  });
 }, []);
+
+
 
 const loadPosts = async () => {
   const { data, error } = await supabase
@@ -40,7 +46,28 @@ const deletePost = async (id) => {
 };
 
 
+const login = async () => {
+  const { data, error } =
+    await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
 
+  console.log("login data", data);
+  console.log("login error", error);
+
+  if (!error) {
+    setUser(data.user);
+  }
+};
+
+
+
+
+const logout = async () => {
+  await supabase.auth.signOut();
+  setUser(null);
+};
 
 
   const handleImage = (e) => {
@@ -105,11 +132,56 @@ setImage("");
   };
 
   return (
-    <div style={{ maxWidth: "800px", margin: "20px auto", padding: "20px" }}>
-      <h1>毎日ミニブログ</h1>
+  <>
 
-      <input
-        type="file"
+   {!user && (
+      <div>
+
+        <h2>管理者ログイン</h2>
+
+        <input
+          placeholder="メールアドレス"
+          value={email}
+          onChange={(e) =>
+            setEmail(e.target.value)
+          }
+        />
+
+        <br /><br />
+
+        <input
+          type="password"
+          placeholder="パスワード"
+          value={password}
+          onChange={(e) =>
+            setPassword(e.target.value)
+          }
+        />
+
+        <br /><br />
+
+        <button onClick={login}>
+          ログイン
+        </button>
+
+      </div>
+
+
+    )}
+
+
+<div style={{ maxWidth: "800px", margin: "20px auto", padding: "20px" }}>
+
+
+
+
+<h1>毎日ミニブログ</h1>
+
+{user && (
+<>
+
+<input
+  type="file"
         accept="image/*"
         onChange={handleImage}
       />
@@ -130,6 +202,11 @@ setImage("");
       <button onClick={addPost}>
   {editingId ? "更新する" : "投稿する"}
 </button>
+
+
+</>
+
+)}
 
       <hr />
 
@@ -168,7 +245,6 @@ setImage("");
 </button>
 
 
-
 <button
   onClick={() => deletePost(post.id)}
 >
@@ -177,8 +253,12 @@ setImage("");
 
 </div>
 
-        </div>
-      ))}
-    </div>
-  );
+</div>
+
+))}
+
+</div>
+
+</>
+);
 }
