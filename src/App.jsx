@@ -56,9 +56,11 @@ const login = async () => {
   console.log("login data", data);
   console.log("login error", error);
 
+  
   if (!error) {
-    setUser(data.user);
-  }
+  console.log("ログイン成功", data.user);
+  setUser(data.user);
+}
 };
 
 
@@ -175,7 +177,7 @@ setImage("");
 
 
 
-<h1 text color="white">毎日ミニブログ</h1>
+<h1 text color="orange">毎日ミニブログ</h1>
 
 
 {user && (
