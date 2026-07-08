@@ -175,7 +175,7 @@ setImage("");
 
 
 
-<h1>毎日ミニブログ</h1>
+<h1 text color="white">毎日ミニブログ</h1>
 
 {user && (
 <>
