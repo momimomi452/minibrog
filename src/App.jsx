@@ -12,10 +12,15 @@ export default function App() {
 const [password, setPassword] = useState("");
 const [user, setUser] = useState(null);
 
+
+
 useEffect(() => {
+  loadPosts();
+
   supabase.auth.getUser().then(({ data }) => {
     setUser(data.user);
   });
+
 }, []);
 
 
@@ -26,7 +31,8 @@ const loadPosts = async () => {
     .select("*")
     .order("created_at", {
       ascending: false,
-    });
+    })
+    .limit(12);
 
   if (!error) {
     setPosts(data);
@@ -56,7 +62,7 @@ const login = async () => {
   console.log("login data", data);
   console.log("login error", error);
 
-  
+
   if (!error) {
   console.log("ログイン成功", data.user);
   setUser(data.user);
@@ -177,7 +183,9 @@ setImage("");
 
 
 
-<h1 text color="orange">毎日ミニブログ</h1>
+<h1 style={{ color: "orange" }}>
+  毎日ミニブログ
+</h1>
 
 
 {user && (
@@ -230,12 +238,25 @@ setImage("");
     .toLocaleString("ja-JP")}
 </p>
 
-    <img
-  src={post.image      
+
+<img
+  src={post.image_url}
+  alt=""
+  style={{
+    width: "100%",
+    height: "auto",
+    objectFit: "contain"
+  }}
+/>
 
  <div className="card-content">      
 
 <p>{post.text}</p>
+
+
+{user && (
+<>
+
 
 
 <button
@@ -254,11 +275,15 @@ setImage("");
   削除
 </button>
 
+</>
+)}
+
 </div>
 
 </div>
 
 ))}
+``
 
 </div>
 
