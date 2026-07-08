@@ -1,18 +1,47 @@
 import { useState, useEffect } from "react";
+import { supabase } from "./supabase.js";
+import "./App.css";
+
 
 export default function App() {
   const [posts, setPosts] = useState([]);
   const [text, setText] = useState("");
   const [image, setImage] = useState("");
+  const [editingId, setEditingId] = useState(null);
 
-  useEffect(() => {
-    const saved = localStorage.getItem("posts");
-    if (saved) setPosts(JSON.parse(saved));
-  }, []);
 
-  useEffect(() => {
-    localStorage.setItem("posts", JSON.stringify(posts));
-  }, [posts]);
+useEffect(() => {
+  loadPosts();
+}, []);
+
+const loadPosts = async () => {
+  const { data, error } = await supabase
+    .from("posts")
+    .select("*")
+    .order("created_at", {
+      ascending: false,
+    });
+
+  if (!error) {
+    setPosts(data);
+  }
+};
+
+
+const deletePost = async (id) => {
+  const { error } = await supabase
+    .from("posts")
+    .delete()
+    .eq("id", id);
+
+  console.log("delete error", error);
+
+  loadPosts();
+};
+
+
+
+
 
   const handleImage = (e) => {
     const file = e.target.files[0];
@@ -23,7 +52,30 @@ export default function App() {
     reader.readAsDataURL(file);
   };
 
-  const addPost = () => {
+  const addPost = async () => {
+
+if (editingId) {
+
+  const { data, error } = await supabase
+    .from("posts")
+    .update({
+      text: text,
+    })
+    .eq("id", editingId)
+    .select();
+
+  console.log("update data", data);
+  console.log("update error", error);
+
+  await loadPosts();
+
+  setEditingId(null);
+  setText("");
+
+  return;
+}
+
+
     if (!text.trim() || !image) return;
 
     const post = {
@@ -33,9 +85,23 @@ export default function App() {
       image,
     };
 
-    setPosts([post, ...posts]);
-    setText("");
-    setImage("");
+   const { data, error } = await supabase
+  .from("posts")
+  .insert([
+    {
+      text,
+      image_url: image,
+    },
+  ]);
+
+console.log("data", data);
+console.log("error", error);
+
+await loadPosts();
+
+
+setText("");
+setImage("");
   };
 
   return (
@@ -62,28 +128,55 @@ export default function App() {
       <p>{text.length}/300文字</p>
 
       <button onClick={addPost}>
-        投稿する
-      </button>
+  {editingId ? "更新する" : "投稿する"}
+</button>
 
       <hr />
 
       {posts.map((post) => (
-        <div key={post.id}>
-          <h3>{post.date}</h3>
+        <div key={post.id}
+  className="card">
+
+          <p>
+  {new Date(post.created_at)
+    .toLocaleString("ja-JP")}
+</p>
 
           <img
-            src={post.image}
+            src={post.image_url}
             alt=""
             style={{
-              width: "100%",
-              maxHeight: "400px",
-              objectFit: "cover"
-            }}
+  width: "100%",
+  height: "450px",
+  objectFit: "cover"
+}}
+
           />
 
-          <p>{post.text}</p>
+ <div className="card-content">      
 
-          <hr />
+<p>{post.text}</p>
+
+
+<button
+  onClick={() => {
+    setText(post.text);
+    setEditingId(post.id);
+  }}
+>
+  編集
+</button>
+
+
+
+<button
+  onClick={() => deletePost(post.id)}
+>
+  削除
+</button>
+
+</div>
+
         </div>
       ))}
     </div>
