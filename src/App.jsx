@@ -34,7 +34,7 @@ const loadPosts = async () => {
     .order("created_at", {
       ascending: false,
     })
-    .limit(10);
+    .limit(6);
 
   console.timeEnd("posts");
 
