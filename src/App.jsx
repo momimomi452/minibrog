@@ -6,7 +6,7 @@ import "./App.css";
 export default function App() {
   const [posts, setPosts] = useState([]);
   const [text, setText] = useState("");
-  const [image, setImage] = useState("");
+  const [imageFile, setImageFile] = useState(null);
   const [editingId, setEditingId] = useState(null);
   const [email, setEmail] = useState("");
 const [password, setPassword] = useState("");
@@ -26,13 +26,19 @@ useEffect(() => {
 
 
 const loadPosts = async () => {
+  console.time("posts");
+
   const { data, error } = await supabase
     .from("posts")
     .select("*")
     .order("created_at", {
       ascending: false,
     })
-    .limit(12);
+    .limit(3);
+
+  console.timeEnd("posts");
+
+  console.log(data);
 
   if (!error) {
     setPosts(data);
@@ -78,14 +84,15 @@ const logout = async () => {
 };
 
 
-  const handleImage = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
 
-    const reader = new FileReader();
-    reader.onload = () => setImage(reader.result);
-    reader.readAsDataURL(file);
-  };
+const handleImage = (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  setImageFile(file);
+};
+
+
 
   const addPost = async () => {
 
@@ -111,23 +118,50 @@ if (editingId) {
 }
 
 
-    if (!text.trim() || !image) return;
+   if (!text.trim() || !imageFile) return;
 
-    const post = {
-      id: Date.now(),
-      date: new Date().toLocaleDateString("ja-JP"),
-      text: text.slice(0, 300),
-      image,
-    };
 
-   const { data, error } = await supabase
+
+
+
+const fileName =
+  `${Date.now()}-${imageFile.name}`;
+
+const { error: uploadError } =
+  await supabase.storage
+    .from("blog-images")
+    .upload(fileName, imageFile);
+
+if (uploadError) {
+  console.log(uploadError);
+  return;
+}
+
+const { data: urlData } =
+  supabase.storage
+    .from("blog-images")
+    .getPublicUrl(fileName);
+
+const imageUrl = urlData.publicUrl;
+
+const { error } = await supabase
   .from("posts")
   .insert([
     {
       text,
-      image_url: image,
+      image_url: imageUrl,
     },
   ]);
+
+console.log(error);
+
+await loadPosts();
+
+setText("");
+setImageFile(null);
+
+
+
 
 console.log("data", data);
 console.log("error", error);
@@ -233,10 +267,23 @@ setImage("");
         <div key={post.id}
   className="card">
 
-          <p>
-  {new Date(post.created_at)
-    .toLocaleString("ja-JP")}
+
+
+<p>
+  {new Date(post.created_at).toLocaleString(
+    "ja-JP",
+    {
+      timeZone: "Asia/Tokyo",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+    }
+  )}
 </p>
+
+
 
 
 <img
@@ -248,6 +295,10 @@ setImage("");
     objectFit: "contain"
   }}
 />
+
+
+
+
 
  <div className="card-content">      
 
