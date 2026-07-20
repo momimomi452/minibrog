@@ -202,7 +202,7 @@ const addPost = async () => {
     )}
 
 
-<div style={{ maxWidth: "800px", margin: "20px auto", padding: "20px" }}>
+<div style={{ maxWidth: "500px", margin: "20px auto", padding: "20px" }}>
 
 
 
