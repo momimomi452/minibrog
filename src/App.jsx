@@ -34,7 +34,7 @@ const loadPosts = async () => {
     .order("created_at", {
       ascending: false,
     })
-    .limit(3);
+    .limit(10);
 
   console.timeEnd("posts");
 
@@ -94,75 +94,74 @@ const handleImage = (e) => {
 
 
 
-  const addPost = async () => {
+const addPost = async () => {
+  console.log("投稿ボタン押された");
 
-if (editingId) {
+  if (editingId) {
+    const { data, error } = await supabase
+      .from("posts")
+      .update({
+        text: text,
+      })
+      .eq("id", editingId)
+      .select();
 
-  const { data, error } = await supabase
+    console.log("update data", data);
+    console.log("update error", error);
+
+    await loadPosts();
+
+    setEditingId(null);
+    setText("");
+
+    return;
+  }
+
+  if (!text.trim() || !imageFile) {
+    console.log("画像または文章が未入力");
+    return;
+  }
+
+  const fileName = `${Date.now()}-${imageFile.name}`;
+
+  const { error: uploadError } =
+    await supabase.storage
+      .from("blog-images")
+      .upload(fileName, imageFile);
+
+  if (uploadError) {
+    console.error(uploadError);
+    return;
+  }
+
+  const { data: urlData } =
+    supabase.storage
+      .from("blog-images")
+      .getPublicUrl(fileName);
+
+  const imageUrl = urlData.publicUrl;
+
+  console.log("imageUrl =", imageUrl);
+
+  const { error } = await supabase
     .from("posts")
-    .update({
-      text: text,
-    })
-    .eq("id", editingId)
-    .select();
+    .insert([
+      {
+        text,
+        image_url: imageUrl,
+      },
+    ]);
 
-  console.log("update data", data);
-  console.log("update error", error);
+  console.log("insert error", error);
 
   await loadPosts();
 
-  setEditingId(null);
   setText("");
-
-  return;
-}
-
-
-   if (!text.trim() || !imageFile) return;
+  setImageFile(null);
+};
 
 
 
-
-
-const fileName =
-  `${Date.now()}-${imageFile.name}`;
-
-const { error: uploadError } =
-  await supabase.storage
-    .from("blog-images")
-    .upload(fileName, imageFile);
-
-if (uploadError) {
-  console.log(uploadError);
-  return;
-}
-
-const { data: urlData } =
-  supabase.storage
-    .from("blog-images")
-    .getPublicUrl(fileName);
-
-const imageUrl = urlData.publicUrl;
-
-const { error } = await supabase
-  .from("posts")
-  .insert([
-    {
-      text,
-      image_url: imageUrl,
-    },
-  ]);
-
-console.log(error);
-
-await loadPosts();
-
-setText("");
-setImageFile(null);
-
-
-
-  };
 
   return (
   <>
@@ -325,7 +324,6 @@ setImageFile(null);
 </div>
 
 ))}
-``
 
 </div>
 
