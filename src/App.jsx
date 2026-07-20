@@ -260,19 +260,17 @@ const addPost = async () => {
 
 
 <p>
-  {new Date(post.created_at).toLocaleString(
-    "ja-JP",
-    {
-      timeZone: "Asia/Tokyo",
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-    }
-  )}
+  {new Date(
+    post.created_at + "Z"
+  ).toLocaleString("ja-JP", {
+    timeZone: "Asia/Tokyo",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+  })}
 </p>
-
 
 
 
