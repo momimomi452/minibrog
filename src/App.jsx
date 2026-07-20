@@ -202,7 +202,7 @@ const addPost = async () => {
     )}
 
 
-<div style={{ maxWidth: "400px", margin: "20px auto", padding: "20px" }}>
+<div style={{ maxWidth: "500px", margin: "20px auto", padding: "20px" }}>
 
 
 
@@ -251,10 +251,31 @@ const addPost = async () => {
 
 )}
 
+
+<h3>過去の記事</h3>
+
+<ul>
+  {posts.map((post) => (
+    <li key={post.id}>
+      {``}
+        {new Date(post.created_at + "Z")
+          .toLocaleDateString("ja-JP")}
+        {"　 "}
+        {post.text.slice(0, 31
+        )}...
+
+    </li>
+  ))}
+</ul>
+
+
       <hr />
 
       {posts.map((post) => (
-        <div key={post.id}
+
+<div
+  key={post.id}
+  id={`post-${post.id}`}
   className="card">
 
 
