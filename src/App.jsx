@@ -168,8 +168,8 @@ const addPost = async () => {
 
    {!user && (
       <div>
-
-        <h2>管理者ログイン</h2>
+        <br></br>
+        <h3 color="white">管理者ログイン</h3>
 
         <input
           placeholder="メールアドレス"
