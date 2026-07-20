@@ -162,15 +162,6 @@ setImageFile(null);
 
 
 
-
-console.log("data", data);
-console.log("error", error);
-
-await loadPosts();
-
-
-setText("");
-setImage("");
   };
 
   return (
