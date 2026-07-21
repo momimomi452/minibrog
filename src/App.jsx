@@ -34,7 +34,7 @@ const loadPosts = async () => {
     .order("created_at", {
       ascending: false,
     })
-    .limit(10);
+    .limit(6);
 
   console.timeEnd("posts");
 
@@ -212,6 +212,10 @@ const addPost = async () => {
 </h1>
 
 
+<h3 style={{ color: "white" }}>
+  記事が出るまで10秒ほどかかるよ
+</h3>
+
 {user && (
   <button onClick={logout}>
     ログアウト
@@ -261,7 +265,7 @@ const addPost = async () => {
         {new Date(post.created_at + "Z")
           .toLocaleDateString("ja-JP")}
         {"　 "}
-        {post.text.slice(0, 31
+        {post.text.slice(0, 38
         )}...
 
     </li>
