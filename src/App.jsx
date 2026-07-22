@@ -212,9 +212,9 @@ const addPost = async () => {
 </h1>
 
 
-<h3 style={{ color: "white" }}>
-  記事が出るまで10秒ほどかかるよ
-</h3>
+<h4 style={{ color: "white" }}>
+  記事が出るまで5秒ほどかかるよ
+</h4>
 
 {user && (
   <button onClick={logout}>
