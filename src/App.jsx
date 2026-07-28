@@ -34,7 +34,7 @@ const loadPosts = async () => {
     .order("created_at", {
       ascending: false,
     })
-    .limit(6);
+    .limit(10);
 
   console.timeEnd("posts");
 
@@ -213,7 +213,7 @@ const addPost = async () => {
 
 
 <h4 style={{ color: "white" }}>
-  記事が出るまで5秒ほどかかるよ
+  記事が出るまで3秒ほどかかるよ
 </h4>
 
 {user && (
