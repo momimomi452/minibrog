@@ -34,7 +34,7 @@ const loadPosts = async () => {
     .order("created_at", {
       ascending: false,
     })
-    .limit(10);
+    .limit(12);
 
   console.timeEnd("posts");
 
@@ -213,7 +213,7 @@ const addPost = async () => {
 
 
 <h4 style={{ color: "white" }}>
-  記事が出るまで3秒ほどかかるよ
+  記事が出るまで1秒ほどかかるよ
 </h4>
 
 {user && (
@@ -260,14 +260,20 @@ const addPost = async () => {
 
 <ul>
   {posts.map((post) => (
-    <li key={post.id}>
-      {``}
-        {new Date(post.created_at + "Z")
-          .toLocaleDateString("ja-JP")}
-        {"　 "}
-        {post.text.slice(0, 38
-        )}...
-
+    <li
+      key={post.id}
+      style={{ cursor: "pointer" }}
+      onClick={() => {
+        window.location.hash = `post-${post.id}`;
+        const el = document.getElementById(`post-${post.id}`);
+        if (el) {
+          el.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      }}
+    >
+      {new Date(post.created_at + "Z").toLocaleDateString("ja-JP")}
+      {"　 "}
+      {post.text.slice(0, 38)}...
     </li>
   ))}
 </ul>
