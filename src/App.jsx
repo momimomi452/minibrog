@@ -160,11 +160,34 @@ const addPost = async () => {
   setImageFile(null);
 };
 
-
+const scrollToTop = () => {
+  window.scrollTo({ top: 0, behavior: "smooth" });
+};
 
 
   return (
   <>
+
+<button
+  onClick={scrollToTop}
+  style={{
+    position: "fixed",
+    bottom: "20px",
+    right: "20px",
+    zIndex: 1000,
+    width: "50px",
+    height: "50px",
+    borderRadius: "50%",
+    border: "none",
+    backgroundColor: "orange",
+    color: "white",
+    fontSize: "20px",
+    cursor: "pointer",
+    boxShadow: "0 2px 6px rgba(0,0,0,0.3)",
+  }}
+>
+  ↑
+</button>
 
    {!user && (
       <div>
